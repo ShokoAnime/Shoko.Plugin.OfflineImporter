@@ -17,7 +17,7 @@ or on [Discord](https://discord.gg/vpeHDsg).
 
 The plugin is listed in the Shoko Core Repository, which ships with Shoko Server, so there is no repository to add.
 
-1. Open the Shoko Web UI and go to **Settings → Plugins → Browse**.
+1. Open the Shoko Web UI and go to **Settings → Plugin Management → Browse**.
 2. Find **Offline Importer** and click **Install** on the desired version.
 3. Restart Shoko.
 
