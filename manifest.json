@@ -5,6 +5,6 @@
   "name": "Offline Importer",
   "overview": "This is a stub manifest, not the published one. If you are reading it as a repository feed, you are on the wrong branch: the published identity and releases live on this repository's `metadata` branch, at `manifest.json`. CI pulls that file over this one before it builds anything. This copy exists so a local build has an id to match against.",
   "authors": "revam",
-  "repository_url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer",
+  "repository_url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter",
   "releases": []
 }

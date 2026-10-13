@@ -1,6 +1,9 @@
 # Shoko Offline Importer Plugin
 
-A [Shoko](https://shokoanime.com/) plugin responsible for importing releases based on file names.
+A [Shoko Server](https://github.com/ShokoAnime/ShokoServer) plugin responsible for importing releases based on file names.
+
+Report problems in the [issue tracker](https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/issues)
+or on [Discord](https://discord.gg/vpeHDsg).
 
 ## Features
 
@@ -15,7 +18,7 @@ A [Shoko](https://shokoanime.com/) plugin responsible for importing releases bas
 1. Open the Shoko Web UI and navigate to **Settings → Plugins → Repositories**.
 2. Add the manifest URL:
    ```
-   https://raw.githubusercontent.com/revam/dotnet-shoko-plugin-offline-importer/metadata/manifest.json
+   https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/metadata/manifest.json
    ```
 3. Go to **Settings → Plugins → Browse** and find **Offline Importer**.
 4. Click **Install** on the desired version.
@@ -23,7 +26,7 @@ A [Shoko](https://shokoanime.com/) plugin responsible for importing releases bas
 
 ### Manual
 
-1. Download the latest `Shoko.Plugin.OfflineImporter-<version>-any.zip` from the [Releases](../../releases) page.
+1. Download the latest `OfflineImporter-<tag>-any.zip` from the [Releases](https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases) page.
 2. Extract the ZIP and place `Shoko.Plugin.OfflineImporter.dll` into your Shoko **Plugins** folder.
 3. Restart Shoko.
 
