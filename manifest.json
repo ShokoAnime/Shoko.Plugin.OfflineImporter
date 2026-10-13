@@ -3,7 +3,7 @@
   "name": "Offline Importer",
   "overview": "Plugin responsible for importing releases based on file names.",
   "authors": "revam",
-  "repository_url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer",
+  "repository_url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter",
   "tags": [
     "release-provider",
     "importer",
@@ -22,7 +22,7 @@
         {
           "runtime": "any",
           "abstraction": "6.0.0",
-          "url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer/releases/download/v1.1.1/OfflineImporter-v1.1.1-any.zip",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.1.1/OfflineImporter-v1.1.1-any.zip",
           "checksum": "sha256:d3a1fb0de14bd6cf4d984d4f019f70bd265217d6712c774503b05b2565f27b7c"
         }
       ]
@@ -38,7 +38,7 @@
         {
           "runtime": "any",
           "abstraction": "6.0.0",
-          "url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer/releases/download/v1.1.0/OfflineImporter-v1.1.0-any.zip",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.1.0/OfflineImporter-v1.1.0-any.zip",
           "checksum": "sha256:f9b6928fef6f1c79f7a6793019d9ef3fa99a75da13cdc92a496c2407f5c8833a"
         }
       ]
@@ -54,7 +54,7 @@
         {
           "runtime": "any",
           "abstraction": "6.0.0",
-          "url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer/releases/download/v1.0.6/OfflineImporter-v1.0.6-any.zip",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.0.6/OfflineImporter-v1.0.6-any.zip",
           "checksum": "sha256:53ac80185ba7a94939614f90ab33dfcfed282e1f342e37d0cad473d1d95baff0"
         }
       ]
@@ -70,7 +70,7 @@
         {
           "runtime": "any",
           "abstraction": "6.0.0",
-          "url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer/releases/download/v1.0.5/OfflineImporter-v1.0.5-any.zip",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.0.5/OfflineImporter-v1.0.5-any.zip",
           "checksum": "sha256:33a2ba95afe3595c3a755f3f4ed127eb515120a8586daea196cc0f7b4546c75f"
         }
       ]
@@ -85,7 +85,7 @@
         {
           "runtime": "any",
           "abstraction": "6.0.0",
-          "url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer/releases/download/v1.0.4/Shoko.Plugin.OfflineImporter-v1.0.4-any.zip",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.0.4/Shoko.Plugin.OfflineImporter-v1.0.4-any.zip",
           "checksum": "1776c4118685c70aaf9c707f38a74d529f51d442a43cfcfafa16db8b38a1d6ee"
         }
       ]
@@ -100,7 +100,7 @@
         {
           "runtime": "any",
           "abstraction": "6.0.0",
-          "url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer/releases/download/v1.0.3/Shoko.Plugin.OfflineImporter-v1.0.3-any.zip",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.0.3/Shoko.Plugin.OfflineImporter-v1.0.3-any.zip",
           "checksum": "19badf3856deb6fd581aa744733a98a8ce45ca254a5e076a0b16e309b1afcd18"
         }
       ]
@@ -115,7 +115,7 @@
         {
           "runtime": "any",
           "abstraction": "6.0.0",
-          "url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer/releases/download/v1.0.2/Shoko.Plugin.OfflineImporter-v1.0.2-any.zip",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.0.2/Shoko.Plugin.OfflineImporter-v1.0.2-any.zip",
           "checksum": "f9416819e5953915904af59b7a1a103b411a93b79ecb1510e5d6310f8d7b261f"
         }
       ]
@@ -130,7 +130,7 @@
         {
           "runtime": "any",
           "abstraction": "6.0.0",
-          "url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer/releases/download/v1.0.1/Shoko.Plugin.OfflineImporter-v1.0.1-any.zip",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.0.1/Shoko.Plugin.OfflineImporter-v1.0.1-any.zip",
           "checksum": "6224d3dcae0145ba0429684e7980296edbc4f73a36e09a8b5a070e71cef8c33b"
         }
       ]
@@ -145,7 +145,7 @@
         {
           "runtime": "any",
           "abstraction": "6.0.0",
-          "url": "https://github.com/revam/dotnet-shoko-plugin-offline-importer/releases/download/v1.0.0/Shoko.Plugin.OfflineImporter-v1.0.0-any.zip",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.0.0/Shoko.Plugin.OfflineImporter-v1.0.0-any.zip",
           "checksum": "334643c45ee482a17317d4a8ef90c769f227579e8d2851a337dec26416dc5921"
         }
       ]
