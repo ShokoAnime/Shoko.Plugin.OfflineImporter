@@ -15,14 +15,11 @@ or on [Discord](https://discord.gg/vpeHDsg).
 
 ### GUI (Recommended)
 
-1. Open the Shoko Web UI and navigate to **Settings → Plugins → Repositories**.
-2. Add the manifest URL:
-   ```
-   https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/metadata/manifest.json
-   ```
-3. Go to **Settings → Plugins → Browse** and find **Offline Importer**.
-4. Click **Install** on the desired version.
-5. Restart Shoko.
+The plugin is listed in the Shoko Core Repository, which ships with Shoko Server, so there is no repository to add.
+
+1. Open the Shoko Web UI and go to **Settings → Plugins → Browse**.
+2. Find **Offline Importer** and click **Install** on the desired version.
+3. Restart Shoko.
 
 ### Manual
 
