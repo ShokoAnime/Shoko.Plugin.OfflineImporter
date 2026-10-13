@@ -16,7 +16,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Shoko.Abstractions.Config;
 using Shoko.Abstractions.Config.Attributes;
-using Shoko.Abstractions.Config.Components;
 using Shoko.Abstractions.Config.Enums;
 using Shoko.Abstractions.Config.Events;
 using Shoko.Abstractions.Exceptions;
@@ -28,6 +27,9 @@ using Shoko.Abstractions.Metadata.Anidb.Services;
 using Shoko.Abstractions.Metadata.Enums;
 using Shoko.Abstractions.Metadata.Services;
 using Shoko.Abstractions.Plugin;
+using Shoko.Abstractions.UI.Attributes;
+using Shoko.Abstractions.UI.Components;
+using Shoko.Abstractions.UI.Enums;
 using Shoko.Abstractions.Utilities;
 using Shoko.Abstractions.Video;
 using Shoko.Abstractions.Video.Hashing;
@@ -1830,8 +1832,8 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
                 Visibility = DisplayVisibility.Visible,
                 ToggleVisibilityTo = DisplayVisibility.Hidden,
                 ToggleWhenMemberIsSet = nameof(ManagedFolderSelector),
-                ToggleWhenSetTo = null,
-                InverseToggleCondition = true
+                ToggleOperator = UiConditionOperator.NotEquals,
+                ToggleWhenSetTo = null
             )]
             public SelectComponent<int>? ManagedFolderSelector { get; set; }
 
