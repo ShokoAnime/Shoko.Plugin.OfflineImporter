@@ -1,14 +1,8 @@
 name: Release Build
 
-# The GitHub half of dual hosting (.gitea/workflows/release.yml is the
-# Gitea half). Both fire at the same tag, each builds its own archive
-# and each writes its own manifest naming its own copy, because the two
-# archives are not the same bytes: the zip embeds the mtimes, so one
-# checksum cannot describe both.
-#
-# The two halves run the same steps in the same order. They differ only
-# where the hosts do: the asset base URL, the token, the uploader, where
-# the release metadata comes from, and the bot identity.
+# Fires when a release is published: builds the archive at the release's
+# tag, uploads it to the release, and writes the release entry into the
+# manifest on the `metadata` branch.
 
 on:
   release:
@@ -17,9 +11,8 @@ on:
 env:
   # The published manifest lives on a branch of its own and CI writes
   # nowhere else. A manifest committed to `stable` is a bot commit on the
-  # branch people work from; and `stable` is shared with Gitea, so two
-  # CIs writing one file on it would fork the branch across the remotes
-  # and make every later push a non-fast-forward.
+  # branch people work from, which everyone then has to pull before their
+  # next push.
   METADATA_BRANCH: metadata
   # One manifest at the branch root. This repository holds one plugin and
   # cuts stable releases alone, so there is neither a plugin axis nor a
@@ -106,8 +99,8 @@ jobs:
       # by the step above.
       #
       # Everything after the bare `--` reaches MSBuild, which is how
-      # `RepositoryUrl` is set: the value differs per host and this branch
-      # is published to both, so it cannot live in the csproj. Every
+      # `RepositoryUrl` is set: the pair of `github.server_url` and
+      # `github.repository` names the repository running the build. Every
       # shoko-build flag belongs before that `--`, because `-p` on this
       # side of it is shoko-build's own `--prune` and would drop published
       # releases from the manifest.
@@ -149,9 +142,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add "${MANIFEST_PATH}"
           # The only commit and the only push, and it is on the metadata
-          # branch. Nothing lands on a source branch, so `stable` stays
-          # byte-identical on both remotes and nobody has to pull a bot
-          # commit before their next change.
+          # branch. Nothing lands on a source branch, so nobody has to
+          # pull a bot commit before their next change.
           #
           # Guarded, because `git commit` exits 1 on an empty index and
           # this step runs after the asset is uploaded: a re-run that
