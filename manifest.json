@@ -12,6 +12,22 @@
   ],
   "releases": [
     {
+      "version": "1.1.2",
+      "tag": "v1.1.2",
+      "released_at": "2026-10-13T19:32:30.569504Z",
+      "channel": "Stable",
+      "release_notes": "Rebuilt against the abstractions \u00606.0.0-alpha.104\u0060 release, which moved the configuration UI attributes. Imports behave as before.\n\nThe plugin now lives in the Shoko organisation and is no longer bundled with the server; install it from the Shoko Core Repository.\n\nRequires Shoko Server with abstractions \u00606.0.0-alpha.104\u0060.",
+      "dependencies": [],
+      "archives": [
+        {
+          "runtime": "any",
+          "abstraction": "6.0.0",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.1.2/OfflineImporter-v1.1.2-any.zip",
+          "checksum": "sha256:4e692801ca9ae37a8d41f821613ed50bb39ff70bcd821ba3e982528e8d19c174"
+        }
+      ]
+    },
+    {
       "version": "1.1.1",
       "tag": "v1.1.1",
       "released_at": "2026-10-06T21:11:31.4097162Z",
