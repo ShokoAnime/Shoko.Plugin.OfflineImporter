@@ -3,7 +3,7 @@
 A [Shoko Server](https://github.com/ShokoAnime/ShokoServer) plugin responsible for importing releases based on file names.
 
 Report problems in the [issue tracker](https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/issues)
-or on [Discord](https://discord.gg/vpeHDsg).
+or on [Discord](https://discord.gg/shokoanime).
 
 ## Features
 
