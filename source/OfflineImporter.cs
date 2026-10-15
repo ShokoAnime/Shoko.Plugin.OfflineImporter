@@ -1188,7 +1188,7 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
     /// Configure how the offline importer works.
     /// </summary>
     [Section(DisplaySectionType.Minimal)]
-    public class Configuration : IReleaseInfoProviderConfiguration, INewtonsoftJsonConfiguration
+    public class Configuration : IReleaseInfoProviderConfiguration, INewtonsoftJsonConfiguration, IPluginConfiguration
     {
         /// <summary>
         /// Match mode to use during the import.

@@ -6,7 +6,7 @@ namespace Shoko.Plugin.OfflineImporter;
 /// <summary>
 /// Plugin responsible for importing releases based on file names.
 /// </summary>
-public class Plugin : IPlugin
+public class Plugin : IPlugin<OfflineImporter.Configuration>
 {
     /// <summary>
     /// The embedded resource of the plugin's thumbnail.
