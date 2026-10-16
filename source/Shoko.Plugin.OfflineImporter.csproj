@@ -7,7 +7,7 @@
         <Title>Shoko Offline Importer</Title>
         <Authors>revam</Authors>
         <RepositoryUrl>https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter</RepositoryUrl>
-        <Version>1.2.0</Version>
+        <Version>1.2.1</Version>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU;x64</Platforms>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
