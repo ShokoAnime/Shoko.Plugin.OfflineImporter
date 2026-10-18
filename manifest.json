@@ -2,7 +2,7 @@
   "id": "72a6ff39-2bff-534c-9216-d03cd38e7346",
   "name": "Offline Importer",
   "overview": "Plugin responsible for importing releases based on file names.",
-  "authors": "revam",
+  "authors": "Shoko Team",
   "repository_url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter",
   "tags": [
     "release-provider",
