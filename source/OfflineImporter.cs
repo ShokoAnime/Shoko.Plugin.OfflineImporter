@@ -1037,11 +1037,11 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
                             !string.Equals(groupRule.GroupSource, releaseGroup.Source, groupRule.IsGroupSourceCaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
                             continue;
                         if (!string.IsNullOrEmpty(groupRule.GroupID) &&
-                            !string.Equals(groupRule.GroupID, releaseGroup.Source, groupRule.IsGroupIDCaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
+                            !string.Equals(groupRule.GroupID, releaseGroup.ID, groupRule.IsGroupIDCaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
                             continue;
                         if (!string.IsNullOrEmpty(groupRule.GroupName) &&
-                            !string.Equals(groupRule.GroupName, releaseGroup.Name, groupRule.IsGroupSourceCaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase) &&
-                            !string.Equals(groupRule.GroupName, releaseGroup.ShortName, groupRule.IsGroupSourceCaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
+                            !string.Equals(groupRule.GroupName, releaseGroup.Name, groupRule.IsGroupNameCaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase) &&
+                            !string.Equals(groupRule.GroupName, releaseGroup.ShortName, groupRule.IsGroupNameCaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
                             continue;
                         ruleMatched = groupRule.MatchType is Configuration.AutoMatchRuleMatchType.Allow;
                         break;
