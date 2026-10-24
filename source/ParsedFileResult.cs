@@ -270,13 +270,15 @@ public record ParsedFileResult
     }
 
     private static ReleaseSource ParseReleaseSource(string releaseSource)
-        => releaseSource.ToUpper().Replace("-", "").Replace(" ", "") switch
+        => releaseSource.ToUpperInvariant().Replace("-", "").Replace("_", "").Replace(" ", "") switch
         {
             "BD" => ReleaseSource.BluRay,
-            "BluRay" => ReleaseSource.BluRay,
-            "BlueRay" => ReleaseSource.BluRay,
+            "BLURAY" => ReleaseSource.BluRay,
+            "BLUERAY" => ReleaseSource.BluRay,
             "HDBD" => ReleaseSource.BluRay,
+            "HDBLURAY" => ReleaseSource.BluRay,
             "UHDBD" => ReleaseSource.BluRay,
+            "UHDBLURAY" => ReleaseSource.BluRay,
             "DVD" => ReleaseSource.DVD,
             "HDDVD" => ReleaseSource.DVD,
             "HKDVD" => ReleaseSource.DVD,
@@ -294,7 +296,7 @@ public record ParsedFileResult
             "WEB" => ReleaseSource.Web,
             "WEBDL" => ReleaseSource.Web,
             "WWW" => ReleaseSource.Web,
-            "Weekly" => ReleaseSource.Web,
+            "WEEKLY" => ReleaseSource.Web,
             _ => ReleaseSource.Unknown,
         };
 
