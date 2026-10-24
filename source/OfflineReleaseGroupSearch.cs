@@ -139,19 +139,27 @@ public static class OfflineReleaseGroupSearch
     /// </summary>
     /// <param name="name">The name of the release group to look up.</param>
     /// <param name="applicationPaths">The application paths to use for storing the offline data.</param>
+    /// <param name="isExcluded">
+    /// Optional. Whether a group must be passed over, in which case the next
+    /// group with the same name is used.
+    /// </param>
     /// <returns>The release group if found, or null otherwise.</returns>
-    public static ReleaseGroup? LookupByName(string name, IApplicationPaths? applicationPaths = null)
+    public static ReleaseGroup? LookupByName(string name, IApplicationPaths? applicationPaths = null, Func<ReleaseGroup, bool>? isExcluded = null)
     {
         EnsureGroupsExists(applicationPaths);
 
         try
         {
             _accessLock.EnterReadLock();
-            if (_groupsByName is null)
+            if (_groupsByName is null || !_groupsByName.Contains(name))
                 return null;
 
-            if (_groupsByName.Contains(name) && _groupsByName[name].FirstOrDefault() is { } group)
-                return new() { ID = group.ID.ToString(), Name = group.Name, ShortName = group.ShortName, Source = "AniDB" };
+            foreach (var group in _groupsByName[name])
+            {
+                var releaseGroup = ToReleaseGroup(group);
+                if (isExcluded is null || !isExcluded(releaseGroup))
+                    return releaseGroup;
+            }
         }
         finally
         {
@@ -160,6 +168,38 @@ public static class OfflineReleaseGroupSearch
 
         return null;
     }
+
+    /// <summary>
+    /// Lists the release groups in the offline data whose name or short name
+    /// another group also has, which are the ones a lookup by name can mix up.
+    /// </summary>
+    /// <param name="applicationPaths">The application paths to use for storing the offline data.</param>
+    /// <returns>The release groups, each once.</returns>
+    public static IReadOnlyList<ReleaseGroup> GetGroupsSharingAName(IApplicationPaths? applicationPaths = null)
+    {
+        EnsureGroupsExists(applicationPaths);
+
+        try
+        {
+            _accessLock.EnterReadLock();
+            if (_groupsByName is null)
+                return [];
+
+            return _groupsByName
+                .Where(groups => groups.Skip(1).Any())
+                .SelectMany(groups => groups)
+                .DistinctBy(group => group.ID)
+                .Select(ToReleaseGroup)
+                .ToList();
+        }
+        finally
+        {
+            _accessLock.ExitReadLock();
+        }
+    }
+
+    private static ReleaseGroup ToReleaseGroup(AniReleaseGroup group)
+        => new() { ID = group.ID.ToString(), Name = group.Name, ShortName = group.ShortName, Source = "AniDB" };
 
     /// <summary>
     /// Looks up a release group by ID in the offline data.
@@ -181,7 +221,7 @@ public static class OfflineReleaseGroupSearch
                 return null;
 
             if (_groupsByID.TryGetValue(groupID, out var group))
-                return new() { ID = group.ID.ToString(), Name = group.Name, ShortName = group.ShortName, Source = "AniDB" };
+                return ToReleaseGroup(group);
         }
         finally
         {

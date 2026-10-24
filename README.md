@@ -36,6 +36,8 @@ The plugin exposes the following settings in the Shoko UI:
 | **Match Mode** | `Lax Mode` | How strict the importer should be when matching releases. |
 | **Store existing hashes** | `true` | Include hashes stored in the database in the provided release info. |
 | **Map release group to AniDB** | `false` | Attempt to map the release group to a known AniDB release group. |
+| **Excluded release groups** | none | Groups never put on a release. When a name belongs to several AniDB groups, an excluded one is passed over for the next. |
+| **Release group sources** | none | The source a group's releases get, in place of the one guessed from the file name. |
 | **Enable remote refresh** | `false` | Allow refreshing AniDB data remotely if not found locally. |
 | **Enable season searching** | `true` | Use the season number from the file name during search. |
 | **Maximum search results to process** | `1` | The maximum number of search results to process per file. |

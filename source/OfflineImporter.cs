@@ -32,6 +32,7 @@ using Shoko.Abstractions.UI.Components;
 using Shoko.Abstractions.UI.Enums;
 using Shoko.Abstractions.Utilities;
 using Shoko.Abstractions.Video;
+using Shoko.Abstractions.Video.Enums;
 using Shoko.Abstractions.Video.Hashing;
 using Shoko.Abstractions.Video.Release;
 using Shoko.Abstractions.Video.Services;
@@ -244,13 +245,17 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
             if (!string.IsNullOrEmpty(match.ReleaseGroup))
             {
                 if (config.MapAsAnidbGroupIfPossible)
-                    group = OfflineReleaseGroupSearch.LookupByName(match.ReleaseGroup, _applicationPaths);
+                    group = OfflineReleaseGroupSearch.LookupByName(match.ReleaseGroup, _applicationPaths, config.IsExcluded);
                 group ??= new() { ID = match.ReleaseGroup, Name = match.ReleaseGroup, ShortName = match.ReleaseGroup, Source = "Offline" };
+                if (config.IsExcluded(group))
+                    group = null;
             }
 
             releaseInfo.Group = group;
             if (match.Source is not null)
                 releaseInfo.Source = match.Source.Value;
+            if (group is not null && ReleaseGroupGuid.For(group) is { } groupGuid && config.ReleaseGroupSources.TryGetValue(groupGuid, out var groupSource))
+                releaseInfo.Source = groupSource;
             releaseInfo.OriginalFilename = Path.GetFileName(match.FilePath);
             releaseInfo.Version = match.Version ?? 1;
             releaseInfo.Metadata = JsonConvert.SerializeObject(match, new JsonSerializerSettings() { Converters = [new StringEnumConverter()] });
@@ -1213,6 +1218,21 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
         public bool MapAsAnidbGroupIfPossible { get; set; } = false;
 
         /// <summary>
+        /// Release groups never put on a release. When the name in a file name
+        /// belongs to more than one AniDB group, an excluded group is passed
+        /// over for the next one.
+        /// </summary>
+        [Display(Name = "Excluded release groups")]
+        public MetadataGuid[] ExcludedReleaseGroups { get; set; } = [];
+
+        /// <summary>
+        /// The source a release group's releases get, in place of the one
+        /// guessed from the file name.
+        /// </summary>
+        [Display(Name = "Release group sources")]
+        public Dictionary<MetadataGuid, ReleaseSource> ReleaseGroupSources { get; set; } = [];
+
+        /// <summary>
         /// If disabled, the importer will not attempt to refresh AniDB data
         /// remotely if not found locally in the database or in the cache.
         /// </summary>
@@ -1338,6 +1358,67 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
                 }
             }
             return new(context.Configuration);
+        }
+
+        /// <summary>
+        /// Lists the AniDB release groups sharing a name with another group,
+        /// which a name can be mapped to wrongly, and the excluded ones.
+        /// </summary>
+        /// <param name="applicationPaths">The application paths to use for storing the offline data.</param>
+        /// <returns>The release groups, labelled.</returns>
+        [OptionsProvider(nameof(ExcludedReleaseGroups))]
+        public IReadOnlyList<SelectOption<MetadataGuid>> ListExcludableReleaseGroups(IApplicationPaths applicationPaths)
+            => ToReleaseGroupOptions(OfflineReleaseGroupSearch.GetGroupsSharingAName(applicationPaths), ExcludedReleaseGroups, applicationPaths);
+
+        /// <summary>
+        /// Lists the release groups of the stored releases, and the ones
+        /// already given a source.
+        /// </summary>
+        /// <param name="releaseService">The video release service.</param>
+        /// <param name="applicationPaths">The application paths to use for storing the offline data.</param>
+        /// <returns>The release groups, labelled.</returns>
+        [OptionsProvider(nameof(ReleaseGroupSources), Target = OptionsTarget.Keys)]
+        public IReadOnlyList<SelectOption<MetadataGuid>> ListKnownReleaseGroups(IVideoReleaseService releaseService, IApplicationPaths applicationPaths)
+            => ToReleaseGroupOptions(releaseService.GetReleaseGroups(), ReleaseGroupSources.Keys, applicationPaths);
+
+        /// <summary>
+        /// Checks whether a release group is excluded.
+        /// </summary>
+        /// <param name="group">The release group.</param>
+        /// <returns><c>true</c> if the group is in <see cref="ExcludedReleaseGroups"/>.</returns>
+        internal bool IsExcluded(IReleaseGroup group)
+            => ExcludedReleaseGroups.Length > 0 && ReleaseGroupGuid.For(group) is { } guid && ExcludedReleaseGroups.Contains(guid);
+
+        private static IReadOnlyList<SelectOption<MetadataGuid>> ToReleaseGroupOptions(
+            IEnumerable<IReleaseGroup> groups,
+            IEnumerable<MetadataGuid> chosen,
+            IApplicationPaths applicationPaths
+        )
+        {
+            var labels = new Dictionary<MetadataGuid, string>();
+            foreach (var group in groups)
+            {
+                if (ReleaseGroupGuid.For(group) is { } guid)
+                    labels.TryAdd(guid, ReleaseGroupGuid.GetLabel(group));
+            }
+
+            // The chosen groups are listed too, so they are shown by name.
+            foreach (var guid in chosen)
+            {
+                if (labels.ContainsKey(guid))
+                    continue;
+
+                labels[guid] = guid.Source == MetadataSource.AniDB &&
+                    guid.TryGetNumericID<int>(out var groupID) &&
+                    OfflineReleaseGroupSearch.LookupByID(groupID, applicationPaths) is { } group
+                        ? ReleaseGroupGuid.GetLabel(group)
+                        : guid.ToString();
+            }
+
+            return labels
+                .OrderBy(pair => pair.Value, StringComparer.OrdinalIgnoreCase)
+                .Select(pair => new SelectOption<MetadataGuid>(pair.Key, pair.Value))
+                .ToList();
         }
 
         /// <summary>
