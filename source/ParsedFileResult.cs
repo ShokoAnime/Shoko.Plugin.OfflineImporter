@@ -514,6 +514,12 @@ public record ParsedFileResult
                 .Replace(_miscRegex, string.Empty)
                 .Replace(_bracketCollapseRegex, string.Empty);
 
+            if (_trailingVersionCheck.Match(post) is { Success: true } versionMatch)
+            {
+                modifiedDetails.Version ??= int.Parse(versionMatch.Groups["version"].Value);
+                post = post[..versionMatch.Index] + " " + post[(versionMatch.Index + versionMatch.Length)..];
+            }
+
             if (_trailingReleaseGroupCheck.Match(post) is { Success: true } releaseGroupMatch)
             {
                 if (string.IsNullOrEmpty(modifiedDetails.ReleaseGroup))
@@ -570,6 +576,11 @@ public record ParsedFileResult
                 modifiedDetails.Source = ParseReleaseSource(sourceResult.Groups["source"].Value);
             }
             fallback = fallback.Replace(_miscRegex, string.Empty).Replace(_bracketCollapseRegex, string.Empty);
+            if (_trailingVersionCheck.Match(fallback) is { Success: true } versionMatch)
+            {
+                modifiedDetails.Version ??= int.Parse(versionMatch.Groups["version"].Value);
+                fallback = fallback[..versionMatch.Index] + " " + fallback[(versionMatch.Index + versionMatch.Length)..];
+            }
             if (_trailingReleaseGroupCheck.Match(fallback) is { Success: true } releaseGroupMatch1)
             {
                 modifiedDetails.ReleaseGroup = releaseGroupMatch1.Groups["releaseGroup"].Value;
@@ -616,6 +627,11 @@ public record ParsedFileResult
         RegexOptions.ECMAScript | RegexOptions.IgnoreCase | RegexOptions.Compiled
     );
 
+    private static readonly Regex _trailingVersionCheck = new(
+        @"(?:^|[\. _]+)v(?<version>\d{1,2})(?=[\. _]*(?:-\w+(?: \([^\)]+\))?|\[[\w \.]+\])?[\. _]*$)",
+        RegexOptions.ECMAScript | RegexOptions.IgnoreCase | RegexOptions.Compiled
+    );
+
     private static readonly Regex _reStitchRegex = new(@"^[\s_.]*-+[\s_.]*$|^[\s_.]*$", RegexOptions.ECMAScript | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private static readonly Regex _trailerCheckRegex = new(
@@ -634,7 +650,7 @@ public record ParsedFileResult
     );
 
     private static readonly Regex _miscRegex = new(
-        @"(?:(?<source>(?:U?HD[ _-]?|SD[ _-]?)?TV(?!-cm)|(?:U?HD[ _-]?)?(?:BD|Blue?-?Ray)(?! (?:menu|notice))|(?:H[KD] ?)?DVD|VHS|S?VCD|Web(?:-?DL)?|www|(?:\b|(?<=_))LD(?:\b|(?=_))|LaserDisc|camera|camcorder)s?(?:[ _-]?rip)?|(?<lang>(?:\b|(?<=_))lng(?:\b|(?=_))|(?:\b|(?<=_))jpn?(?:\b|(?=_))|jap(?:anese)?|(?:\b|(?<=_))gb(?:\b|(?=_))|eng(?:lish)?|(?:\b|(?<=_))en(?:\b|(?=_))|(?:\b|(?<=_))es\b|(?:\b|(?<=_))cn(?:\b|(?=_))|chinese|spa(?:nish)?|ita(?:lian)?|(?:\b|(?<=_))de(?:\b|(?=_))|ger(?:man)?)|(?<codec>(?:xvid|divx|prores|vvc|hevc|avc|mpeg[\.-]?[1-4]|vc1|av1|flv|[hx]\.?26[1-6]|aac|e?ac-?3|flac|dca|ogg|opus|wmav2|wmapro|adpcm_ms|pcm|mp[23]|vp[69]f?)(?:[ \._-]?[1-9]\.[0-9](?:\.[0-9])?|-(?:8|10)bits?)?)|esub|(?:m(?:ulti(?:(?:ple)?[-_ ]?)?)?)?sub(?!a)(?:s|titled?)?|dub(?:bed)?|raw|rip|(un)?cen(ored)?|(?<resolution>[48]k|\d{3,5}[pi]|\d{3,5}[x×]\d{3,5})|multi(?:[-_ ]?(?:pack|audio))?|remux|truehd|hi10[pi]?|(?:\b|(?<=_))proper(?:\b|(?=_))|dolby (?:atmos|vision)?|\bdovi\b|dts|vostfr|vorbis|crf\d+|at-x|dual[-_ ]?audio|ddp2\.0|cr|amzn|[24579]ch|(?:8|10)-?bits?|[0-9a-f]{8}|weekly)",
+        @"(?:(?<source>(?:U?HD[ _-]?|SD[ _-]?)?TV(?!-cm)|(?:U?HD[ _-]?)?(?:BD|Blue?-?Ray)(?! (?:menu|notice))|(?:H[KD] ?)?DVD|VHS|S?VCD|Web(?:-?DL)?|www|(?:\b|(?<=_))LD(?:\b|(?=_))|LaserDisc|camera|camcorder)s?(?:[ _-]?rip)?|(?<lang>(?:\b|(?<=_))lng(?:\b|(?=_))|(?:\b|(?<=_))jpn?(?:\b|(?=_))|jap(?:anese)?|(?:\b|(?<=_))gb(?:\b|(?=_))|eng(?:lish)?|(?:\b|(?<=_))en(?:\b|(?=_))|(?:\b|(?<=_))es\b|(?:\b|(?<=_))cn(?:\b|(?=_))|chinese|spa(?:nish)?|ita(?:lian)?|(?:\b|(?<=_))de(?:\b|(?=_))|ger(?:man)?)|(?<codec>(?:xvid|divx|prores|vvc|hevc|avc|mpeg[\.-]?[1-4]|vc1|av1|flv|[hx]\.?26[1-6]|aac|e?ac-?3|flac|dca|ogg|opus|wmav2|wmapro|adpcm_ms|pcm|mp[23]|vp[69]f?)(?:[ \._-]?[1-9]\.[0-9](?:\.[0-9])?|-(?:8|10)bits?)?)|esub|(?:m(?:ulti(?:(?:ple)?[-_ ]?)?)?)?sub(?!a)(?:s|titled?)?|dub(?:bed)?|raw|rip|(un)?cen(ored)?|(?<resolution>[48]k|\d{3,5}[pi]|\d{3,5}[x×]\d{3,5})|multi(?:[-_ ]?(?:pack|audio))?|remux|truehd|hi10[pi]?|(?:\b|(?<=_))(?:proper|repack)(?:\b|(?=_))|dolby (?:atmos|vision)?|\bdovi\b|dts|vostfr|vorbis|crf\d+|at-x|dual[-_ ]?audio|ddp2\.0|cr|amzn|[24579]ch|(?:8|10)-?bits?|[0-9a-f]{8}|weekly)",
         RegexOptions.ECMAScript | RegexOptions.IgnoreCase | RegexOptions.Compiled
     );
 
