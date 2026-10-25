@@ -10,7 +10,25 @@
     "offline",
     "filename"
   ],
+  "thumbnail_url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/stable/source/Assets/thumbnail.svg",
+  "icon_url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/stable/source/Assets/icon.svg",
   "releases": [
+    {
+      "version": "1.3.1",
+      "tag": "v1.3.1",
+      "released_at": "2026-10-25T20:31:15.7621717Z",
+      "channel": "Stable",
+      "release_notes": "Reads a version that stands on its own before the release group, such as \u0060\u2026H264.v2-snk\u0060, which no longer hides the group either, and cleans up \u0060REPACK\u0060 like \u0060PROPER\u0060. Built for the new server contract, with the plugin class now generated from the project.\n\nRequires Shoko Server with abstractions \u00606.0.0-alpha.114\u0060.",
+      "dependencies": [],
+      "archives": [
+        {
+          "runtime": "any",
+          "abstraction": "6.0.0",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.3.1/OfflineImporter-v1.3.1-any.zip",
+          "checksum": "sha256:e56d89a6075751ad2cad4b3447aa278d23e991204986d169e940bb180300d5f8"
+        }
+      ]
+    },
     {
       "version": "1.3.0",
       "tag": "v1.3.0",
@@ -246,7 +264,5 @@
         }
       ]
     }
-  ],
-  "thumbnail_url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/stable/source/Assets/thumbnail.svg",
-  "icon_url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/stable/source/Assets/icon.svg"
+  ]
 }
