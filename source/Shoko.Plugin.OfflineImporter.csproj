@@ -15,14 +15,18 @@
         <EnableDynamicLoading>true</EnableDynamicLoading>
     </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Shoko.Abstractions" Version="6.0.0-alpha.113" ExcludeAssets="runtime" />
-    </ItemGroup>
+    <PropertyGroup Label="Plugin">
+        <PluginGenerateClass>true</PluginGenerateClass>
+        <PluginID>72a6ff39-2bff-534c-9216-d03cd38e7346</PluginID>
+        <PluginName>Offline Importer</PluginName>
+        <PluginOverview>Plugin responsible for importing releases based on file names.</PluginOverview>
+        <PluginTags>release-provider,importer,offline,filename</PluginTags>
+        <PluginIcon>Assets/icon.svg</PluginIcon>
+        <PluginThumbnail>Assets/thumbnail.svg</PluginThumbnail>
+    </PropertyGroup>
 
     <ItemGroup>
-        <!-- The plugin's thumbnail and icon, read by the server through the plugin. -->
-        <EmbeddedResource Include="Assets\thumbnail.svg" LogicalName="Shoko.Plugin.OfflineImporter.Assets.thumbnail.svg" />
-        <EmbeddedResource Include="Assets\icon.svg" LogicalName="Shoko.Plugin.OfflineImporter.Assets.icon.svg" />
+        <PackageReference Include="Shoko.Abstractions" Version="6.0.0-alpha.113" ExcludeAssets="runtime" />
     </ItemGroup>
 
     <ItemGroup>
@@ -36,7 +40,7 @@
              discovery. PrivateAssets alone is not enough: without ExcludeAssets
              the package's own MSBuild tasks and satellite assemblies end up in
              the plugin output. -->
-        <PackageReference Include="Shoko.BuildTools.Targets" Version="0.3.2" PrivateAssets="All" ExcludeAssets="runtime" />
+        <PackageReference Include="Shoko.BuildTools.Targets" Version="0.6.0" PrivateAssets="All" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.203" PrivateAssets="All" />
         <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" PrivateAssets="All" />
     </ItemGroup>
