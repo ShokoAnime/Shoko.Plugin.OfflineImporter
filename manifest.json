@@ -14,6 +14,24 @@
   "icon_url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/stable/source/Assets/icon.svg",
   "releases": [
     {
+      "version": "1.5.0",
+      "tag": "v1.5.0",
+      "released_at": "2026-11-16T19:47:17.4773279Z",
+      "channel": "Stable",
+      "release_notes": "Tells Shoko Server when it can only link files by hand. Without any auto-match rules in its configuration, the server\u0027s own searches now pass it by and none of its jobs are queued, and its availability says why: \u0022No auto-match rules are set up in the Offline Importer\u0027s configuration.\u0022 Linking files by hand still asks it.\n\nRequires Shoko Server with abstractions \u00606.0.0-alpha.132\u0060.",
+      "dependencies": [],
+      "archives": [
+        {
+          "runtime": "any",
+          "abstraction": "6.0.0",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.5.0/OfflineImporter-v1.5.0-any.zip",
+          "checksum": "sha256:7a3777c6278650c3d1d4c8896f46d75d125ef63cb158398d52a6f04602d051cb",
+          "packed_size": 118859,
+          "unpacked_size": 352006
+        }
+      ]
+    },
+    {
       "version": "1.4.0",
       "tag": "v1.4.0",
       "released_at": "2026-11-16T12:15:40.1084123Z",
