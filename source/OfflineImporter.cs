@@ -1214,8 +1214,8 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
         /// known AniDB release group if possible.
         /// </summary>
         [Display(Name = "Map release group to AniDB")]
-        [DefaultValue(false)]
-        public bool MapAsAnidbGroupIfPossible { get; set; } = false;
+        [DefaultValue(true)]
+        public bool MapAsAnidbGroupIfPossible { get; set; } = true;
 
         /// <summary>
         /// Release groups never put on a release. When the name in a file name
@@ -1237,8 +1237,8 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
         /// remotely if not found locally in the database or in the cache.
         /// </summary>
         [Display(Name = "Enable remote refresh")]
-        [DefaultValue(false)]
-        public bool AllowRemote { get; set; } = false;
+        [DefaultValue(true)]
+        public bool AllowRemote { get; set; } = true;
 
         /// <summary>
         /// If disabled, the importer will not attempt to use the season number
