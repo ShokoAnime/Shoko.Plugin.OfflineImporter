@@ -9,7 +9,7 @@ or on [Discord](https://discord.gg/shokoanime).
 
 - **Filename-based Importing** — Imports releases by parsing file names when online metadata sources are unavailable.
 - **Custom Parsing Rules** — Configure regex-based rules to match your specific file naming conventions.
-- **Automatic Matching Rules** — Set up auto-match rules to automatically approve or deny specific releases.
+- **Automatic Matching Rules** — Set up auto-match rules to automatically approve or deny specific releases. Without any, the importer only links files by hand, and the server lists it as manual only for auto-linking.
 
 ## Installation
 

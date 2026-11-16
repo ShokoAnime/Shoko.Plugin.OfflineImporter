@@ -73,6 +73,11 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
     /// <inheritdoc/>
     public string Name => "Offline Importer";
 
+    /// <inheritdoc/>
+    public string? CannotAutoMatchReason => _configurationProvider.Load().AutoMatchRules.Count > 0
+        ? null
+        : "No auto-match rules are set up in the Offline Importer's configuration.";
+
     private const string MatchPrefix = "match://";
 
     private const string SearchPrefix = "search://";
@@ -83,9 +88,9 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
     public string Description => """
         Imports releases based on file paths.
 
-        By default operates only using the local database, local cache, and
-        local title search. Online refresh can be enabled if desired, but it's
-        designed to function without it.
+        Works from the local database, local cache, and local title search,
+        and refreshes missing anime from AniDB unless online refresh is turned
+        off. Without auto-match rules it only links files by hand.
 
         You have three different operation modes; lax, strict (with extra info),
         and strict (without extra info). By default it operates in lax mode,
