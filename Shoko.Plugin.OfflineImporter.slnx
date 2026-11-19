@@ -1,5 +1,5 @@
 <Solution>
   <Folder Name="/source/">
-    <Project Path="source/Shoko.Plugin.OfflineImporter.csproj" />
+    <Project Path="source/Shoko.Plugin.OfflineImporter/Shoko.Plugin.OfflineImporter.csproj" />
   </Folder>
 </Solution>

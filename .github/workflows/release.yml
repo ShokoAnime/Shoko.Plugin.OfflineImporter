@@ -18,14 +18,14 @@ env:
   # cuts stable releases alone, so there is neither a plugin axis nor a
   # channel axis to spend a path segment on.
   MANIFEST_PATH: manifest.json
-  # The stub in the work tree. `Shoko.BuildTools.Targets` reaches it from
-  # `source/` through the parent leg of its search and stamps what it
-  # reads into the assembly; shoko-build takes identity and tags from the
+  # The stub in the work tree, next to the plugin's project, where
+  # `Shoko.BuildTools.Targets` looks for it and stamps what it reads into
+  # the assembly; shoko-build takes identity and tags from the
   # same path and writes the release entry back into it. The live manifest
   # is pulled over it before anything builds, so the embedded metadata and
   # the published manifest cannot disagree, and the reset in the last step
   # puts the stub back.
-  IDENTITY_MANIFEST: manifest.json
+  IDENTITY_MANIFEST: source/Shoko.Plugin.OfflineImporter/manifest.json
   # GitHub serves release assets from its own download route under the
   # repository, so the base is the server and repository this run already
   # names rather than a CDN in front of them.
@@ -95,11 +95,11 @@ jobs:
       # .deps.json included, not just the plugin assembly), checksums the
       # archive and writes the release entry into the manifest with the
       # abstraction version the assembly was actually compiled against. It
-      # reads the project from the working directory, hence `source`, and
-      # updates the manifest in place - the live one, fetched over the stub
-      # by the step above.
+      # reads the project from the working directory, hence the plugin's
+      # folder, and updates the manifest in place - the live one, fetched
+      # over the stub by the step above.
       - name: Build and package
-        working-directory: source
+        working-directory: source/Shoko.Plugin.OfflineImporter
         run: |
           dotnet shoko-build \
             --configuration Release \

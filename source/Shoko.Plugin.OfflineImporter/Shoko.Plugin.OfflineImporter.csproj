@@ -21,8 +21,8 @@
         <PluginName>Offline Importer</PluginName>
         <PluginOverview>Plugin responsible for importing releases based on file names.</PluginOverview>
         <PluginTags>release-provider,importer,offline,filename</PluginTags>
-        <PluginIcon>Assets/icon.svg</PluginIcon>
-        <PluginThumbnail>Assets/thumbnail.svg</PluginThumbnail>
+        <PluginIcon>../../design/branding/icon.svg</PluginIcon>
+        <PluginThumbnail>../../design/branding/thumbnail.svg</PluginThumbnail>
     </PropertyGroup>
 
     <ItemGroup>

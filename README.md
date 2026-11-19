@@ -51,7 +51,7 @@ dotnet restore
 dotnet build --configuration Release
 ```
 
-The compiled assembly will be located at `source/bin/Release/net10.0/Shoko.Plugin.OfflineImporter.dll`.
+The compiled assembly will be located at `source/Shoko.Plugin.OfflineImporter/bin/Release/net10.0/Shoko.Plugin.OfflineImporter.dll`.
 
 ## License
 
