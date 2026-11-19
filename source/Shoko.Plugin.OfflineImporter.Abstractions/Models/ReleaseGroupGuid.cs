@@ -1,7 +1,7 @@
 using Shoko.Abstractions.Metadata;
 using Shoko.Abstractions.Video.Release;
 
-namespace Shoko.Plugin.OfflineImporter;
+namespace Shoko.Plugin.OfflineImporter.Abstractions.Models;
 
 /// <summary>
 /// Names release groups as metadata identifiers, written as

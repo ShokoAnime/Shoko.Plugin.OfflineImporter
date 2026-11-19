@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <OutputType>Library</OutputType>
+        <LangVersion>latest</LangVersion>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <RootNamespace>Shoko.Plugin.OfflineImporter.Abstractions</RootNamespace>
+        <AssemblyName>Shoko.Plugin.OfflineImporter.Abstractions</AssemblyName>
+        <Configurations>Debug;Release</Configurations>
+        <Platforms>AnyCPU;x64</Platforms>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <!-- The version comes from Directory.Build.props, shared with the plugin. -->
+    <PropertyGroup>
+        <Title>Shoko Offline Importer Abstractions</Title>
+        <Authors>Shoko Team</Authors>
+        <Description>
+            The contracts another Shoko plugin uses to run the Offline Importer's file name
+            matching: a path in, the parsed show, season, episodes, release details and the
+            IDs tagged in the file and folder names out, by the user's current rules. It
+            carries none of the plugin itself.
+        </Description>
+        <PackageId>Shoko.Plugin.OfflineImporter.Abstractions</PackageId>
+        <PackageTags>shoko;plugin;offline-importer;filename;parser;regex</PackageTags>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter</PackageProjectUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <!-- Released as stable with the plugin while Shoko.Abstractions is
+             still prerelease, as the plugin is. -->
+        <NoWarn>$(NoWarn);NU5104</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../LICENSE" Pack="true" PackagePath="/" />
+        <None Include="README.md" Pack="true" PackagePath="/" />
+        <None Include="../../design/branding/icon.png" Pack="true" PackagePath="/" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- The server supplies it at run time, so it is not copied out. -->
+        <PackageReference Include="Shoko.Abstractions" Version="$(ShokoAbstractionsVersion)" ExcludeAssets="runtime" />
+    </ItemGroup>
+</Project>

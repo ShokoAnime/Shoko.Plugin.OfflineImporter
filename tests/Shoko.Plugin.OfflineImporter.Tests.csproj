@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+        <PackageReference Include="xunit.v3" Version="3.1.0" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+        <PackageReference Include="Moq" Version="4.20.72" />
+    </ItemGroup>
+
+    <!-- The plugin excludes the abstractions' runtime assets, since the
+         server supplies them. The test host is not the server, so it brings
+         its own copy, of the same version. -->
+    <ItemGroup>
+        <PackageReference Include="Shoko.Abstractions" Version="$(ShokoAbstractionsVersion)" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+        <ProjectReference Include="../source/Shoko.Plugin.OfflineImporter/Shoko.Plugin.OfflineImporter.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="Fixtures/**/*" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+</Project>

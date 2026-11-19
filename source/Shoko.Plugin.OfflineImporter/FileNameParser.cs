@@ -4,126 +4,16 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Shoko.Abstractions.Metadata.Enums;
 using Shoko.Abstractions.Video.Enums;
+using Shoko.Plugin.OfflineImporter.Abstractions.Models;
 
 #pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
 namespace Shoko.Plugin.OfflineImporter;
 
 /// <summary>
-/// Contains information about a parsed file path.
+/// Runs the parsing rules on a file path, and cleans up what they matched.
 /// </summary>
-public record ParsedFileResult
+internal static class FileNameParser
 {
-    /// <summary>
-    /// Whether the file was matched.
-    /// </summary>
-    public required bool Success { get; set; }
-
-    /// <summary>
-    /// The file path.
-    /// </summary>
-    public required string FilePath { get; set; }
-
-    /// <summary>
-    /// The file extension.
-    /// </summary>
-    public string? FileExtension { get; set; }
-
-    /// <summary>
-    /// The release group.
-    /// </summary>
-    public string? ReleaseGroup { get; set; }
-
-    /// <summary>
-    /// The series name.
-    /// </summary>
-    public string? SeriesName { get; set; }
-
-    /// <summary>
-    /// The series type.
-    /// </summary>
-    public AnimeType? SeriesType { get; set; }
-
-    /// <summary>
-    /// The show's release year, if found.
-    /// </summary>
-    public int? Year { get; set; }
-
-    /// <summary>
-    /// The season.
-    /// </summary>
-    public int? SeasonNumber { get; set; }
-
-    /// <summary>
-    /// The episode name.
-    /// </summary>
-    public string? EpisodeName { get; set; }
-
-    /// <summary>
-    /// The episode start number.
-    /// </summary>
-    public float EpisodeStart { get; set; }
-
-    /// <summary>
-    /// The episode end number.
-    /// </summary>
-    public float EpisodeEnd { get; set; }
-
-    /// <summary>
-    /// The episode text, different from the episode name as it describes
-    /// the episode range in textual form.
-    /// </summary>
-    public string? EpisodeText { get; set; }
-
-    /// <summary>
-    /// Indicates if the theme video is creditless.
-    /// </summary>
-    public bool? Creditless { get; set; }
-
-    /// <summary>
-    /// Indicates if the episode is censored or uncensored.
-    /// </summary>
-    public bool? Censored { get; set; }
-
-    /// <summary>
-    /// The episode type.
-    /// </summary>
-    public EpisodeType EpisodeType { get; set; }
-
-    /// <summary>
-    /// The release source.
-    /// </summary>
-    public ReleaseSource? Source { get; set; }
-
-    /// <summary>
-    /// The version.
-    /// </summary>
-    public int? Version { get; set; }
-
-    /// <summary>
-    /// The AniDB anime ID.
-    /// </summary>
-    public int? AnidbAnimeId { get; set; }
-
-    /// <summary>
-    /// The AniDB episode ID.
-    /// </summary>
-    public int? AnidbEpisodeId { get; set; }
-
-    /// <summary>
-    /// The rule name used to match this file.
-    /// </summary>
-    public required string RuleName { get; set; }
-
-    /// <summary>
-    /// An empty result.
-    /// </summary>
-    public static ParsedFileResult Empty => new()
-    {
-        Success = false,
-        FilePath = string.Empty,
-        RuleName = "none",
-    };
-
     /// <summary>
     /// Attempts to match a file path to a rule.
     /// </summary>
@@ -133,11 +23,11 @@ public record ParsedFileResult
     public static ParsedFileResult Match(string? filePath, IReadOnlyList<CompiledRule> rules)
     {
         if (string.IsNullOrWhiteSpace(filePath))
-            return Empty;
+            return ParsedFileResult.Empty;
 
         var fileName = CleanFileName(filePath);
         if (string.IsNullOrWhiteSpace(fileName))
-            return Empty;
+            return ParsedFileResult.Empty;
 
         foreach (var rule in rules)
         {
@@ -172,7 +62,7 @@ public record ParsedFileResult
                 if (episodeEnd - episodeStart < 0)
                     (episodeStart, episodeEnd) = (episodeEnd, episodeStart);
 
-                var seriesType = DetectAnimeType(match.Groups);
+                var seriesType = DetectSeriesType(match.Groups);
                 var episodeType = DetectEpisodeType(match.Groups);
                 var episodeText = (string?)null;
                 if (episodeType == EpisodeType.Episode && episodeStart == episodeEnd && !float.IsInteger(episodeStart))
@@ -194,14 +84,14 @@ public record ParsedFileResult
                     ReleaseGroup = match.Groups["releaseGroup"]?.Value,
                     SeriesName = showName,
                     SeriesType = seriesType,
-                    Year = match.Groups["year"].Value is { Length: > 0 } ? int.Parse(match.Groups["year"].Value) : null,
+                    SeriesYear = match.Groups["year"].Value is { Length: > 0 } ? int.Parse(match.Groups["year"].Value) : null,
                     SeasonNumber = match.Groups["season"].Value is { Length: > 0 } ? int.Parse(match.Groups["season"].Value) : null,
                     EpisodeName = match.Groups["episodeName"]?.Value,
                     EpisodeStart = episodeStart,
                     EpisodeEnd = episodeEnd,
                     EpisodeType = episodeType,
                     EpisodeText = episodeText,
-                    Version = match.Groups["version"].Value is { Length: > 0 } ? int.Parse(match.Groups["version"].Value) : null,
+                    ReleaseVersion = match.Groups["version"].Value is { Length: > 0 } ? int.Parse(match.Groups["version"].Value) : null,
                     RuleName = rule.Name,
                 };
 
@@ -216,7 +106,7 @@ public record ParsedFileResult
             }
         }
 
-        return Empty;
+        return ParsedFileResult.Empty;
     }
 
     private static string? CleanFileName(string filePath)
@@ -233,7 +123,7 @@ public record ParsedFileResult
         return fileName;
     }
 
-    private static AnimeType? DetectAnimeType(GroupCollection matchGroups)
+    private static AnimeType? DetectSeriesType(GroupCollection matchGroups)
     {
         if (matchGroups["isMovie"].Success || matchGroups["isMovie2"].Success)
             return AnimeType.Movie;
@@ -308,7 +198,7 @@ public record ParsedFileResult
     /// <returns></returns>
     public static ParsedFileResult? DefaultTransform(ParsedFileResult originalDetails, Match match)
     {
-        var modifiedDetails = originalDetails with { };
+        var modifiedDetails = Copy(originalDetails);
 
         // Season 0 means it's a special.
         if (modifiedDetails is { SeasonNumber: 0, EpisodeType: EpisodeType.Episode })
@@ -382,7 +272,7 @@ public record ParsedFileResult
             matchResult = showName.Match(@" (?:19|2[01])\d{2}$");
             if (matchResult.Success)
             {
-                modifiedDetails.Year = int.Parse(matchResult.Value.Trim());
+                modifiedDetails.SeriesYear = int.Parse(matchResult.Value.Trim());
                 showName = $"{showName[..^matchResult.Length]} ({matchResult.Value.Trim()})";
             }
 
@@ -415,13 +305,13 @@ public record ParsedFileResult
                 modifiedDetails.EpisodeName = null;
         }
 
-        if (modifiedDetails.Source is null && _sourceRegex.Match(originalDetails.FilePath) is { Success: true } sourceResult)
+        if (modifiedDetails.ReleaseSource is null && _sourceRegex.Match(originalDetails.FilePath) is { Success: true } sourceResult)
         {
-            modifiedDetails.Source = ParseReleaseSource(sourceResult.Groups["source"].Value);
+            modifiedDetails.ReleaseSource = ParseReleaseSource(sourceResult.Groups["source"].Value);
         }
 
-        if (modifiedDetails.Censored is null && _censoredRegex.Match(originalDetails.FilePath) is { Success: true } censoredResult)
-            modifiedDetails.Censored = !censoredResult.Groups["isDe"].Success;
+        if (modifiedDetails.IsCensored is null && _censoredRegex.Match(originalDetails.FilePath) is { Success: true } censoredResult)
+            modifiedDetails.IsCensored = !censoredResult.Groups["isDe"].Success;
 
         if (modifiedDetails.EpisodeStart == 0)
         {
@@ -481,7 +371,7 @@ public record ParsedFileResult
     /// <returns></returns>
     public static ParsedFileResult? PrePostTransform(ParsedFileResult originalDetails, Match match)
     {
-        var modifiedDetails = originalDetails with { };
+        var modifiedDetails = Copy(originalDetails);
         if (match.Groups["pre"].Value is { Length: > 0 } pre)
         {
             if (pre.Length > 0 && pre[^1] is '(' or '[' or '{')
@@ -500,7 +390,7 @@ public record ParsedFileResult
                     pre = $".{pre}";
             }
             if (pre.Match(@" \((?<year>\d{4})\)") is { Success: true } yearMatch)
-                modifiedDetails.Year = int.Parse(yearMatch.Groups["year"].Value);
+                modifiedDetails.SeriesYear = int.Parse(yearMatch.Groups["year"].Value);
             modifiedDetails.SeriesName = pre.Trim();
         }
         if (match.Groups["post"].Value is { Length: > 0 } post)
@@ -508,7 +398,7 @@ public record ParsedFileResult
             if (post.Length > 0 && post[0] is ')' or ']' or '}')
                 post = post[1..];
             if (_sourceRegex.Match(post) is { Success: true } sourceResult)
-                modifiedDetails.Source = ParseReleaseSource(sourceResult.Groups["source"].Value);
+                modifiedDetails.ReleaseSource = ParseReleaseSource(sourceResult.Groups["source"].Value);
 
             post = post
                 .Replace(_miscRegex, string.Empty)
@@ -516,7 +406,7 @@ public record ParsedFileResult
 
             if (_trailingVersionCheck.Match(post) is { Success: true } versionMatch)
             {
-                modifiedDetails.Version ??= int.Parse(versionMatch.Groups["version"].Value);
+                modifiedDetails.ReleaseVersion ??= int.Parse(versionMatch.Groups["version"].Value);
                 post = post[..versionMatch.Index] + " " + post[(versionMatch.Index + versionMatch.Length)..];
             }
 
@@ -546,7 +436,7 @@ public record ParsedFileResult
 
             var episode = int.Parse(episodeText);
             var episodeTextDetails = $"{match.Groups["isThemeSong"].Value}{(match.Groups["episode"].Success ? episode.ToString() : "")}{match.Groups["themeSuffix"].Value}";
-            modifiedDetails.Creditless = match.Groups["isCreditless"].Success;
+            modifiedDetails.IsCreditless = match.Groups["isCreditless"].Success;
             modifiedDetails.EpisodeType = EpisodeType.Credits;
             modifiedDetails.EpisodeStart = episode;
             modifiedDetails.EpisodeEnd = episode;
@@ -563,7 +453,7 @@ public record ParsedFileResult
     /// <returns></returns>
     public static ParsedFileResult? FallbackTransform(ParsedFileResult originalDetails, Match match)
     {
-        var modifiedDetails = originalDetails with { };
+        var modifiedDetails = Copy(originalDetails);
         if (match.Groups["fallback"].Value is { Length: > 0 } fallback)
         {
             if (_leadingReleaseGroupCheck.Match(fallback) is { Success: true } releaseGroupMatch)
@@ -573,12 +463,12 @@ public record ParsedFileResult
             }
             if (_sourceRegex.Match(fallback) is { Success: true } sourceResult)
             {
-                modifiedDetails.Source = ParseReleaseSource(sourceResult.Groups["source"].Value);
+                modifiedDetails.ReleaseSource = ParseReleaseSource(sourceResult.Groups["source"].Value);
             }
             fallback = fallback.Replace(_miscRegex, string.Empty).Replace(_bracketCollapseRegex, string.Empty);
             if (_trailingVersionCheck.Match(fallback) is { Success: true } versionMatch)
             {
-                modifiedDetails.Version ??= int.Parse(versionMatch.Groups["version"].Value);
+                modifiedDetails.ReleaseVersion ??= int.Parse(versionMatch.Groups["version"].Value);
                 fallback = fallback[..versionMatch.Index] + " " + fallback[(versionMatch.Index + versionMatch.Length)..];
             }
             if (_trailingReleaseGroupCheck.Match(fallback) is { Success: true } releaseGroupMatch1)
@@ -598,7 +488,7 @@ public record ParsedFileResult
                     fallback = $".{fallback}";
             }
             if (fallback.Match(@" \((?<year>\d{4})\)") is { Success: true } yearMatch)
-                modifiedDetails.Year = int.Parse(yearMatch.Groups["year"].Value);
+                modifiedDetails.SeriesYear = int.Parse(yearMatch.Groups["year"].Value);
             modifiedDetails.SeriesName = fallback.Trim();
         }
         return DefaultTransform(modifiedDetails, match);
@@ -695,6 +585,12 @@ public record ParsedFileResult
         public bool UsePath { get; init; }
 
         /// <summary>
+        /// The ID tags the rule forces, read from its forced IDs; those that
+        /// do not read are left out.
+        /// </summary>
+        public IReadOnlyList<FileNameIds.Tag> ForcedTags { get; init; } = [];
+
+        /// <summary>
         /// The regex pattern to match.
         /// </summary>
         public required Regex Regex { get; init; }
@@ -704,4 +600,34 @@ public record ParsedFileResult
         /// </summary>
         public Func<ParsedFileResult, Match, ParsedFileResult?> Transform { get; init; } = DefaultTransform;
     }
+
+    /// <summary>
+    /// Copies a result, so a transform can change the copy and leave the
+    /// original as it was.
+    /// </summary>
+    /// <param name="result">The result.</param>
+    /// <returns>The copy.</returns>
+    private static ParsedFileResult Copy(ParsedFileResult result)
+        => new()
+        {
+            RuleName = result.RuleName,
+            Success = result.Success,
+            FilePath = result.FilePath,
+            FileExtension = result.FileExtension,
+            SeriesName = result.SeriesName,
+            SeriesType = result.SeriesType,
+            SeriesYear = result.SeriesYear,
+            SeasonNumber = result.SeasonNumber,
+            EpisodeName = result.EpisodeName,
+            EpisodeType = result.EpisodeType,
+            EpisodeStart = result.EpisodeStart,
+            EpisodeEnd = result.EpisodeEnd,
+            EpisodeText = result.EpisodeText,
+            IsCreditless = result.IsCreditless,
+            IsCensored = result.IsCensored,
+            ReleaseGroup = result.ReleaseGroup,
+            ReleaseSource = result.ReleaseSource,
+            ReleaseVersion = result.ReleaseVersion,
+            IDs = result.IDs,
+        };
 }

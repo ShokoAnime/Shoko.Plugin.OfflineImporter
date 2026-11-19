@@ -1,0 +1,123 @@
+{
+  "$schema": "./offline-importer.schema.json",
+  "Mode": "lax",
+  "StoreHashes": true,
+  "MapAsAnidbGroupIfPossible": false,
+  "ExcludedReleaseGroups": [],
+  "ReleaseGroupSources": {},
+  "AllowRemote": false,
+  "AllowSeasonSearching": true,
+  "MaxSearchResultsToProcess": 1,
+  "SkipAvailabilityCheck": true,
+  "AutoMatchRules": [],
+  "ParseRules": [
+    {
+      "Key": "anti-timestamp",
+      "Name": "anti-timestamp",
+      "Type": "deny",
+      "ForcedEpisodeType": null,
+      "ForcedEpisodeNumber": null,
+      "ForcedAnidbAnimeId": null,
+      "ForcedAnidbEpisodeId": null,
+      "IsCaseSensitive": false,
+      "UsePath": false,
+      "Regex": "^\\d{4}[._:\\- ]\\d{2}[._:\\- ]\\d{2}[._:\\- T]\\d{2}[._:\\- ]\\d{2}[._:\\- ]\\d{2}(?:[._:\\- ]\\d{1,6})?(?:Z|[+-]\\d{2}:?\\d{2})?\\.(?<extension>[a-zA-Z0-9_\\-+]+)$"
+    },
+    {
+      "Key": "trash-anime",
+      "Name": "trash-anime",
+      "Type": "default",
+      "ForcedEpisodeType": null,
+      "ForcedEpisodeNumber": null,
+      "ForcedAnidbAnimeId": null,
+      "ForcedAnidbEpisodeId": null,
+      "IsCaseSensitive": false,
+      "UsePath": false,
+      "Regex": "^(?<showName>.+?(?: \\((?<year>\\d{4})\\))) - (?:(?<isSpecial>S00?)|S\\d+)E\\d+(?:-E?\\d+)? - (?<episode>\\d+(?:-\\d+)?) - (?<episodeName>.+?(?=\\[)).*?(?:-(?<releaseGroup>[^\\[\\] ]+))?\\s*\\.(?<extension>[a-zA-Z0-9_\\-+]+)$"
+    },
+    {
+      "Key": "pipes",
+      "Name": "pipes",
+      "Type": "pre-post",
+      "ForcedEpisodeType": null,
+      "ForcedEpisodeNumber": null,
+      "ForcedAnidbAnimeId": null,
+      "ForcedAnidbEpisodeId": null,
+      "IsCaseSensitive": false,
+      "UsePath": false,
+      "Regex": "[\\|｜] (?<pre>.*) Season (?<season>\\d+) Episode (?<episode>\\d+)(?<post>.+)?\\.(?<extension>[a-z0-9]{1,10})$"
+    },
+    {
+      "Key": "default",
+      "Name": "default",
+      "Type": "pre-post",
+      "ForcedEpisodeType": null,
+      "ForcedEpisodeNumber": null,
+      "ForcedAnidbAnimeId": null,
+      "ForcedAnidbEpisodeId": null,
+      "IsCaseSensitive": false,
+      "UsePath": false,
+      "Regex": "^(?<pre>.*?(?<!(?:PV|CM|Preview|Trailer|Commercial|Menu|Jump Festa Special)[\\._ ]*(-[\\._ ]*)?))[\\._ ]*(?:-[\\._ ]*)?(?<=\\b|_)(?:(?:s(?<season>\\d+(?!\\d+)))?(?:(?:OVA|OAD)[\\._ ]*|Vol(?:\\.|ume)[\\._ ]*|(?<=\\b|_)(?<isOther>o)|e(?:p(?:isode|s)?)?[\\._ ]*|(?=(?:\\d+(?:(?!-?\\d+[pi])-\\d+?|\\.5)?)(?:v\\d{1,2})?(?:[\\._ ]*END(?=\\b|_))?[\\._ ]*\\.[a-z0-9]{1,10}$)|(?<=[\\._ ]*-[\\._ ]*)(?=(?:\\d+(?:(?!-\\d+[pi])-\\d+?|\\.5)?)(?:[\\._ ]*END(?=\\b|_))?[\\._ ]*(?:[\\._ ]*-[\\._ ]*|[\\[\\({「]))|(?<=[\\._ ]*-[\\._ ]*)(?=(?:(?!(?:19|2[01])\\d{2})\\d+(?:(?!-\\d+[pi])-\\d+?|\\.5)?)(?![\\._ ]*-[\\._ ]*))|(?=(?:(?!\\d+[\\. _]\\(\\d{4}\\))\\d+(?:(?!-\\d+[pi])-\\d+?|\\.5)?)(?:v\\d{1,2})?(?:[\\._ ]*END(?=\\b|_))?[\\._ ]*[\\[\\({「])|(?<=s\\d+) )(?<episode>\\d+(?:(?!-\\d+[pi])-\\d+?|\\.5)?)(?!(?:\\.\\d)?(?:\\]|\\))|-(?!\\d+[pi])\\d+|(?<!(?:e(?:pisode|ps?)?)?\\k<episode>)[\\._ ]*(?:OVA|OAD)| (?:nc)?(?:ed|op))|(?<!jump[\\. _]festa[\\. _])s(?:p(?:ecials?)?)?[ \\.]?(?<specialNumber>\\d+(?!(?:\\.\\d)?(?:\\]|\\))| \\d+|[\\. _]?-[\\. _]?(?:E(?:p(?:isode)?)?[\\. _]?)?\\d+))(?![\\. _-]*(?:nc)?(?:ed|op))|(?<=\\b|_)(?<![a-z0-9])(?:s(?<season>\\d+(?!\\d+))(?:[\\. _]*-)?[\\. _]*)?(?:(?<isCreditless>nc|[Cc]reditless|NC)[\\s_.]*)?(?<isThemeSong>ED|OP|Opening|Ending)(?![a-z]{2,})(?:[\\._ ]*(?<episode>\\d+(?!\\d*p)))?(?<themeSuffix>(?<=(?:OP|ED)(?:[\\._ ]*\\d+)?)(?:\\.\\d+|[a-z]))?(?=\\b|_))(?:v(?<version>\\d{1,2}))?(?=\\b|_)(?:[\\._ ]*END)?[\\._ ]*(?:-[\\._ ]*)?(?<post>.+)?\\.(?<extension>[a-z0-9]{1,10})$"
+    },
+    {
+      "Key": "brackets-1",
+      "Name": "brackets-1",
+      "Type": "default",
+      "ForcedEpisodeType": null,
+      "ForcedEpisodeNumber": null,
+      "ForcedAnidbAnimeId": null,
+      "ForcedAnidbEpisodeId": null,
+      "IsCaseSensitive": false,
+      "UsePath": false,
+      "Regex": "^\\[(?<releaseGroup>[^\\]\\n]+)\\](?:\\[[^\\]\\n]+\\]){0,2}\\[(?<showName>[^\\]\\n]+)\\]\\[(?<year>\\d{4})\\]\\[(?<episode>\\d+)\\](?:\\[[^\\]\\n]+\\]){0,3}\\.(?<extension>[a-zA-Z0-9_\\-+]+)$"
+    },
+    {
+      "Key": "brackets-2",
+      "Name": "brackets-2",
+      "Type": "default",
+      "ForcedEpisodeType": null,
+      "ForcedEpisodeNumber": null,
+      "ForcedAnidbAnimeId": null,
+      "ForcedAnidbEpisodeId": null,
+      "IsCaseSensitive": false,
+      "UsePath": false,
+      "Regex": "^\\[(?<releaseGroup>[^\\]\\n]+)\\](?:\\[[^\\]\\n]+\\]){0,2}\\[(?<showName>[^\\]\\n]+)\\]\\[(?<episode>\\d+)\\](?:\\[[^\\]\\n]+\\]){0,3}\\.(?<extension>[a-zA-Z0-9_\\-+]+)$"
+    },
+    {
+      "Key": "reversed-1",
+      "Name": "reversed-1",
+      "Type": "default",
+      "ForcedEpisodeType": null,
+      "ForcedEpisodeNumber": null,
+      "ForcedAnidbAnimeId": null,
+      "ForcedAnidbEpisodeId": null,
+      "IsCaseSensitive": false,
+      "UsePath": false,
+      "Regex": "^\\[?(?<episode>\\d+)\\s*-\\s*(?<showName>[^[]+)\\]\\s*(?:\\[[^\\]]*\\])*\\.(?<extension>[a-zA-Z0-9_\\-+]+)$"
+    },
+    {
+      "Key": "kamba-special",
+      "Name": "kamba-special",
+      "Type": "pre-post",
+      "ForcedEpisodeType": null,
+      "ForcedEpisodeNumber": null,
+      "ForcedAnidbAnimeId": null,
+      "ForcedAnidbEpisodeId": null,
+      "IsCaseSensitive": false,
+      "UsePath": false,
+      "Regex": "^(?<pre>.+)? (?<episode>\\d+) (?<post>.+)?\\.(?<extension>[a-z0-9]{1,10})$"
+    },
+    {
+      "Key": "fallback",
+      "Name": "fallback",
+      "Type": "fallback",
+      "ForcedEpisodeType": null,
+      "ForcedEpisodeNumber": null,
+      "ForcedAnidbAnimeId": null,
+      "ForcedAnidbEpisodeId": null,
+      "IsCaseSensitive": false,
+      "UsePath": false,
+      "Regex": "^(?<fallback>.+)\\.(?<extension>[a-zA-Z0-9_\\-+]+)$"
+    }
+  ]
+}

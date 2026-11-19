@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using Shoko.Abstractions.Plugin;
 using Shoko.Abstractions.Video.Release;
 
-namespace Shoko.Plugin.OfflineImporter;
+namespace Shoko.Plugin.OfflineImporter.Services;
 
 /// <summary>
 /// Responsible for handling the offline release group search.
@@ -167,6 +167,96 @@ public static class OfflineReleaseGroupSearch
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Finds the release groups in the offline data whose name or short name
+    /// is the given name, exactly.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <param name="applicationPaths">The application paths to use for storing the offline data.</param>
+    /// <param name="isExcluded">Optional. Whether a group is left out.</param>
+    /// <param name="preferredID">Optional. The AniDB ID of the group to put first.</param>
+    /// <returns>
+    /// The groups, the preferred one first, then in the order
+    /// <see cref="LookupByName"/> tries them.
+    /// </returns>
+    public static IReadOnlyList<ReleaseGroup> FindByName(string name, IApplicationPaths? applicationPaths = null, Func<ReleaseGroup, bool>? isExcluded = null, int? preferredID = null)
+    {
+        EnsureGroupsExists(applicationPaths);
+
+        try
+        {
+            _accessLock.EnterReadLock();
+            if (_groupsByName is null || !_groupsByName.Contains(name))
+                return [];
+
+            return _groupsByName[name]
+                .OrderBy(group => group.ID != preferredID)
+                .Select(ToReleaseGroup)
+                .Where(group => isExcluded is null || !isExcluded(group))
+                .ToList();
+        }
+        finally
+        {
+            _accessLock.ExitReadLock();
+        }
+    }
+
+    /// <summary>
+    /// Lists every release group in the offline data.
+    /// </summary>
+    /// <param name="applicationPaths">The application paths to use for storing the offline data.</param>
+    /// <param name="isExcluded">Optional. Whether a group is left out.</param>
+    /// <returns>The groups, by name, then by when AniDB added them.</returns>
+    public static IReadOnlyList<ReleaseGroup> GetAll(IApplicationPaths? applicationPaths = null, Func<ReleaseGroup, bool>? isExcluded = null)
+    {
+        EnsureGroupsExists(applicationPaths);
+
+        try
+        {
+            _accessLock.EnterReadLock();
+            if (_groupsByID is null)
+                return [];
+
+            return _groupsByID.Values
+                .OrderBy(group => group.Name)
+                .ThenBy(group => group.CreatedAt)
+                .Select(ToReleaseGroup)
+                .Where(group => isExcluded is null || !isExcluded(group))
+                .ToList();
+        }
+        finally
+        {
+            _accessLock.ExitReadLock();
+        }
+    }
+
+    /// <summary>
+    /// Lists the names or short names in the offline data that more than one
+    /// release group has, with those groups.
+    /// </summary>
+    /// <param name="applicationPaths">The application paths to use for storing the offline data.</param>
+    /// <returns>The names, in order, each with its groups in lookup order.</returns>
+    public static IReadOnlyList<(string Name, IReadOnlyList<ReleaseGroup> Groups)> GetSharedNames(IApplicationPaths? applicationPaths = null)
+    {
+        EnsureGroupsExists(applicationPaths);
+
+        try
+        {
+            _accessLock.EnterReadLock();
+            if (_groupsByName is null)
+                return [];
+
+            return _groupsByName
+                .Where(groups => groups.DistinctBy(group => group.ID).Skip(1).Any())
+                .Select(groups => (groups.Key, (IReadOnlyList<ReleaseGroup>)groups.DistinctBy(group => group.ID).Select(ToReleaseGroup).ToList()))
+                .ToList();
+        }
+        finally
+        {
+            _accessLock.ExitReadLock();
+        }
     }
 
     /// <summary>

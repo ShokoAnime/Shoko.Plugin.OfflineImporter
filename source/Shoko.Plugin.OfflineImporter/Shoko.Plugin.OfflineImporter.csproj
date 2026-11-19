@@ -7,7 +7,6 @@
         <Title>Shoko Offline Importer</Title>
         <Authors>revam</Authors>
         <RepositoryUrl>https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter</RepositoryUrl>
-        <Version>1.5.0</Version>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU;x64</Platforms>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
@@ -20,18 +19,31 @@
         <PluginID>72a6ff39-2bff-534c-9216-d03cd38e7346</PluginID>
         <PluginName>Offline Importer</PluginName>
         <PluginOverview>Plugin responsible for importing releases based on file names.</PluginOverview>
-        <PluginTags>release-provider,importer,offline,filename</PluginTags>
+        <PluginNamespace>offline</PluginNamespace>
+        <PluginTags>abstractions,filename,parser,regex,anidb</PluginTags>
         <PluginIcon>../../design/branding/icon.svg</PluginIcon>
         <PluginThumbnail>../../design/branding/thumbnail.svg</PluginThumbnail>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Shoko.Abstractions" Version="6.0.0-alpha.132" ExcludeAssets="runtime" />
+        <PackageReference Include="Shoko.Abstractions" Version="$(ShokoAbstractionsVersion)" ExcludeAssets="runtime" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.7" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" ExcludeAssets="runtime" />
+        <!-- Shipped next to the plugin, so a plugin depending on this one
+             shares the copy loaded with it. -->
+        <ProjectReference Include="../Shoko.Plugin.OfflineImporter.Abstractions/Shoko.Plugin.OfflineImporter.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Shoko.Plugin.OfflineImporter.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" ExcludeAssets="runtime" />
     </ItemGroup>
 
