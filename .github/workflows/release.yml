@@ -18,14 +18,6 @@ env:
   # cuts stable releases alone, so there is neither a plugin axis nor a
   # channel axis to spend a path segment on.
   MANIFEST_PATH: manifest.json
-  # The stub in the work tree, next to the plugin's project, where
-  # `Shoko.BuildTools.Targets` looks for it and stamps what it reads into
-  # the assembly; shoko-build takes identity and tags from the
-  # same path and writes the release entry back into it. The live manifest
-  # is pulled over it before anything builds, so the embedded metadata and
-  # the published manifest cannot disagree, and the reset in the last step
-  # puts the stub back.
-  IDENTITY_MANIFEST: source/Shoko.Plugin.OfflineImporter/manifest.json
   # GitHub serves release assets from its own download route under the
   # repository, so the base is the server and repository this run already
   # names rather than a CDN in front of them.
@@ -55,15 +47,16 @@ jobs:
           # checkout only sets up a remote-tracking ref for the branch it
           # checked out, hence the explicit refspec.
           #
-          # No fallback. The branch is seeded by hand once; falling back
-          # to the stub in the work tree would publish a release against a
-          # description that says it is a stub, with an empty release list
-          # in front of it. A fetch of a refspec naming a branch the
-          # remote does not have exits 128 with "couldn't find remote
-          # ref", so a first run stops here, before the build and well
-          # before the upload.
+          # It goes to the runner's temp folder, outside the work tree: the
+          # plugin's identity comes from its project, and the manifest is
+          # only what shoko-build adds the release entry to.
+          #
+          # No fallback. The branch is seeded by hand once. A fetch of a
+          # refspec naming a branch the remote does not have exits 128 with
+          # "couldn't find remote ref", so a first run stops here, before
+          # the build and well before the upload.
           git fetch --no-tags origin "+refs/heads/${METADATA_BRANCH}:refs/remotes/origin/${METADATA_BRANCH}"
-          git show "origin/${METADATA_BRANCH}:${MANIFEST_PATH}" > "${IDENTITY_MANIFEST}"
+          git show "origin/${METADATA_BRANCH}:${MANIFEST_PATH}" > "${RUNNER_TEMP}/manifest.json"
 
       - name: Read the release notes
         env:
@@ -96,8 +89,8 @@ jobs:
       # archive and writes the release entry into the manifest with the
       # abstraction version the assembly was actually compiled against. It
       # reads the project from the working directory, hence the plugin's
-      # folder, and updates the manifest in place - the live one, fetched
-      # over the stub by the step above.
+      # folder, and updates the manifest in place: the live one the step
+      # above fetched into the runner's temp folder.
       - name: Build and package
         working-directory: source/Shoko.Plugin.OfflineImporter
         run: |
@@ -106,7 +99,7 @@ jobs:
             --channel Stable \
             --tag "${{ github.event.release.tag_name }}" \
             --release-notes-path "${RUNNER_TEMP}/release-notes.md" \
-            --manifest "${GITHUB_WORKSPACE}/${IDENTITY_MANIFEST}" \
+            --manifest "${RUNNER_TEMP}/manifest.json" \
             --output "${GITHUB_WORKSPACE}/dist/{name}-{tag}-{runtime}.zip" \
             --url "${ASSET_BASE_URL}/{tag}/{name}-{tag}-{runtime}.zip"
 
@@ -122,12 +115,9 @@ jobs:
 
       - name: Commit the manifest on the metadata branch
         run: |
-          # The manifest travels in RUNNER_TEMP rather than in a stash: a
-          # stash of a path that already exists on the metadata branch
-          # conflicts on every apply. The work tree also has to be clean
-          # to switch branches, and the reset puts the stub back over the
-          # live manifest fetched above, so the copy has to happen first.
-          cp "${IDENTITY_MANIFEST}" "${RUNNER_TEMP}/manifest.json"
+          # The manifest waits in RUNNER_TEMP, outside the work tree. The
+          # work tree has to be clean to switch branches, and the tool
+          # update above changed .config/dotnet-tools.json, hence the reset.
           git reset --hard
           git checkout -B "${METADATA_BRANCH}" "origin/${METADATA_BRANCH}"
           cp "${RUNNER_TEMP}/manifest.json" "${MANIFEST_PATH}"
