@@ -1,7 +1,8 @@
 name: Release Build
 
 # Fires when a release is published: builds the archive at the release's
-# tag, uploads it to the release, and writes the release entry into the
+# tag, publishes the abstractions package to NuGet under the same version,
+# uploads the archive to the release, and writes the release entry into the
 # manifest on the `metadata` branch.
 
 on:
@@ -31,6 +32,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
+      id-token: write  # NuGet trusted publishing
     steps:
       - uses: actions/checkout@v7
         with:
@@ -76,6 +78,33 @@ jobs:
       - name: Build
         run: dotnet build Shoko.Plugin.OfflineImporter.slnx --configuration Release
 
+      - name: Test
+        run: dotnet test Shoko.Plugin.OfflineImporter.slnx --configuration Release --no-build
+
+      # Packed from the build above, before shoko-build builds the plugin
+      # again, and checked against it: `--no-build` packs whatever DLL is in
+      # the output folder, so the step compares the packed one with the one
+      # just built. The plugin and the package share the version in
+      # Directory.Build.props, which has to be the tag's.
+      - name: Pack the abstractions
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          PROJECT_DIR: source/Shoko.Plugin.OfflineImporter.Abstractions
+          PACKAGE_ID: Shoko.Plugin.OfflineImporter.Abstractions
+        run: |
+          version="$(dotnet msbuild "${PROJECT_DIR}" -getProperty:Version)"
+          if [ "v${version}" != "${TAG}" ]; then
+            echo "::error::The version in Directory.Build.props (${version}) is not the tag's (${TAG})."
+            exit 1
+          fi
+          dotnet pack "${PROJECT_DIR}" --configuration Release --no-build --output "${RUNNER_TEMP}/nuget"
+          package="${RUNNER_TEMP}/nuget/${PACKAGE_ID}.${version}.nupkg"
+          unzip -p "${package}" "lib/net10.0/${PACKAGE_ID}.dll" > "${RUNNER_TEMP}/packed.dll"
+          if ! cmp -s "${RUNNER_TEMP}/packed.dll" "${PROJECT_DIR}/bin/Release/net10.0/${PACKAGE_ID}.dll"; then
+            echo "::error::The packed ${PACKAGE_ID}.dll is not the one just built."
+            exit 1
+          fi
+
       # The newest shoko-build, so every release records what the newest
       # manifest format holds. The update names the version it installed;
       # the pin in .config/dotnet-tools.json is only the floor for local
@@ -102,6 +131,25 @@ jobs:
             --manifest "${RUNNER_TEMP}/manifest.json" \
             --output "${GITHUB_WORKSPACE}/dist/{name}-{tag}-{runtime}.zip" \
             --url "${ASSET_BASE_URL}/{tag}/{name}-{tag}-{runtime}.zip"
+
+      # Before the upload, so a run that fails here leaves the release
+      # without its archive and the feed without the release, and a re-run
+      # skips a package NuGet already has. Trusted publishing: the job's
+      # OIDC token is traded for a short-lived API key, so no key is stored.
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1
+        id: login
+        with:
+          user: ${{ secrets.nuget_user }}
+
+      - name: Publish the abstractions to NuGet
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push "${RUNNER_TEMP}/nuget/*.nupkg" \
+            --api-key "${NUGET_API_KEY}" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
 
       # A glob rather than a name, so an archive per runtime identifier
       # uploads without touching this step.
