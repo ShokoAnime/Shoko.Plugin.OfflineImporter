@@ -3,7 +3,7 @@
         <!-- The one place the version is spelled. The plugin and the
              abstractions package are released together, in lock step, from
              the same tag. -->
-        <Version>1.5.0</Version>
+        <Version>2.0.0</Version>
         <!-- The one place the Shoko.Abstractions version is spelled, so the
              plugin, its abstractions and the tests build against the same
              contract. -->
