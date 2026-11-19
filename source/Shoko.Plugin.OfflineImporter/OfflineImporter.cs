@@ -1128,7 +1128,7 @@ public partial class OfflineImporter : IReleaseInfoProvider<OfflineImporter.Conf
             if (!isValid)
                 return false;
         }
-        return false;
+        return true;
     }
 
     private static List<Configuration.AutoMatchEpisodeRangeRule> ParseEpisodeRanges(string? episodeRanges)
