@@ -2,17 +2,41 @@
   "id": "72a6ff39-2bff-534c-9216-d03cd38e7346",
   "name": "Offline Importer",
   "overview": "Plugin responsible for importing releases based on file names.",
+  "namespace": "offline",
   "authors": "Shoko Team",
   "repository_url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter",
   "tags": [
+    "service-registration",
     "release-provider",
-    "importer",
-    "offline",
-    "filename"
+    "abstractions",
+    "filename",
+    "parser",
+    "regex",
+    "anidb"
   ],
   "thumbnail_url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/metadata/thumbnail.svg",
   "icon_url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/metadata/icon.svg",
+  "is_meta": false,
   "releases": [
+    {
+      "version": "2.0.0",
+      "tag": "v2.0.0",
+      "released_at": "2026-11-20T01:30:59.7018502Z",
+      "channel": "Stable",
+      "release_notes": "Opens the Offline Importer to other plugins and to the API. It now ships with its own NuGet package, \u0060Shoko.Plugin.OfflineImporter.Abstractions\u0060, released alongside the plugin with the same version. It is a major version because of the changes listed under **Changes** below, which can affect existing file names and settings.\n\n**For plugins**\n- \u0060IOfflineMatchingService\u0060 runs your current parsing rules on a path and returns the \u0060ParsedFileResult\u0060. The result lists every ID tag it found in \u0060IDs\u0060, for any registered metadata source, with its type, depth and percentage range.\n- \u0060IOfflineReleaseGroupService\u0060 gives access to the offline AniDB release group list. You can look a group up by ID or by name, getting one group or every group with that name. You can also list or fuzzy-search all groups, with the excluded groups and the preferred group for each shared name applied. It works even when the importer itself is set not to map groups. The group list is an unofficial copy of AniDB\u0027s groups, kept up to date by volunteers. It\u0027s refreshed daily, but it can miss new groups or lag behind AniDB.\n- \u0060IOfflineAutoMatchService\u0060 decides whether a release is auto-matched, given any rules, video files and release.\n- The settings themselves, \u0060OfflineImporterConfiguration\u0060, live in the package under \u0060Shoko.Plugin.OfflineImporter.Abstractions.Configuration\u0060, with every rule type. Another plugin reads and changes the parsing rules, auto-match rules and release group settings by loading and saving them through the server\u0027s configuration service. Every save is validated, whoever makes it, and the importer picks it up at once.\n\n**API** (admins only, under \u0060/api/plugin/offline/v1\u0060)\n- \u0060POST Match\u0060 matches one path or a list of them without importing or saving anything. Paths can be absolute or relative to a managed folder.\n- \u0060ReleaseGroup\u0060 lists and searches the groups, with paged lists. It also has \u0060ByName\u0060, \u0060{id}\u0060 and \u0060Shared\u0060.\n- The settings, rules included, go through the server\u0027s own configuration routes.\n\n**Matching**\n- ID tags in file and folder names accept typed prefixes for every source:\n  - \u0060a\u0060, \u0060s\u0060 or \u0060tv\u0060 for a series;\n  - \u0060m\u0060 for a movie;\n  - \u0060e\u0060 for an episode.\n  \n  A part on a movie also works, such as \u0060m123\u002750\u0060/\u0060m123@50\u0060 for 0-50% of the movie with id 123.\n- A start with a trailing dash runs to the end: \u0060e5\u002750-\u0060 is 50\u2013100%.\n- For AniDB, a movie tag imports as the episode it is.\n- The importer now takes every AniDB episode tagged in the file name, not just the last value of the first tag.\n- Auto-match rules with episode ranges now match. Before this, the range check always failed.\n- Ranges are checked against episodes of any source, AniDB first. An \u0060AnyCredits\u0060 range now matches credits.\n- The computed rule keys are no longer written to \u0060offline-importer.json\u0060.\n\n**Changes**\n- A single percentage in a part now always means from the start: \u0060e5\u002750\u0060 is 0\u201350%, whatever comes before it in the tag. It used to count on from where the previous value\u0027s part ended, so a file named with several sizes in one tag now imports differently. Files already imported keep their ranges.\n- A custom parsing rule forces IDs of any source now, in \u0060ForcedIDs\u0060: a source and its IDs written as a tag without the brackets, such as \u0060anidb\u0060 and \u0060a123,e456\u0060. Forced IDs come first in the parse result, marked as forced, and the importer prefers forced AniDB IDs over those tagged in the path. A rule\u0027s old forced AniDB anime and episode IDs are moved over when the settings load.\n- An AniDB group rule stores its group\u0027s name as \u0060AnidbGroupName\u0060. Existing rules show \u0022\u003Cunknown\u003E\u0022 until they are edited.\n\nRequires Shoko Server with \u0060Shoko.Abstractions\u0060 \u00606.0.0-alpha.134\u0060.",
+      "is_meta": false,
+      "dependencies": [],
+      "archives": [
+        {
+          "runtime": "any",
+          "abstraction": "6.0.0",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v2.0.0/OfflineImporter-v2.0.0-any.zip",
+          "checksum": "sha256:38fbe45c9bef1ee549673b397272db7c5a53171225cd4d7e4f20c263fba8205f",
+          "packed_size": 192282,
+          "unpacked_size": 554862
+        }
+      ]
+    },
     {
       "version": "1.5.0",
       "tag": "v1.5.0",
