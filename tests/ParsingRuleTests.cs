@@ -106,4 +106,15 @@ public class ParsingRuleTests
         Assert.Equal(1, _saves);
         Assert.Equal("everything", service.Match("Show - 01.mkv").RuleName);
     }
+    [Theory]
+    [InlineData("/mnt/anime/Series/Tokyo.Revengers.S04E03.Crack.a.Smile.1080p.DSNP.WEB-DL.AAC2.0.H.264-NTb.mkv", "Tokyo Revengers")]
+    [InlineData("/mnt/anime/Series/Space.Dandy.S01E01.1080p.WEB-DL.AAC2.0.H.264-NTb.mkv", "Space Dandy")]
+    [InlineData("/mnt/anime/Series/Danger.Mail.S01E01.1080p.WEB-DL.mkv", "Danger Mail")]
+    [InlineData("/mnt/anime/Series/Trip.Hazard.S01E01.1080p.WEB-DL.mkv", "Trip Hazard")]
+    public void SeriesName_KeepsWordsThatHoldATagInside(string path, string seriesName)
+    {
+        _current = new();
+
+        Assert.Equal(seriesName, CreateService().Match(path).SeriesName);
+    }
 }
