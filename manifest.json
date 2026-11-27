@@ -19,6 +19,25 @@
   "is_meta": false,
   "releases": [
     {
+      "version": "2.0.1",
+      "tag": "v2.0.1",
+      "released_at": "2026-11-27T20:12:04.865134Z",
+      "channel": "Stable",
+      "release_notes": "- Release tags are only stripped from a file name as whole words. Tags such as \u0060eng\u0060, \u0060spa\u0060, \u0060ger\u0060, \u0060ita\u0060 and \u0060rip\u0060 were also cut out of the middle of words, so \u0022Tokyo Revengers\u0022 was read as \u0022Tokyo Revers\u0022, \u0022Meitantei\u0022 as \u0022Mentei\u0022 and \u0022HorribleSubs\u0022 as \u0022Horribls\u0022. \u0060DTV\u0060, and \u0060DivX\u0060 with its version number, are now read as tags too.\n- Built for the stable \u0060Shoko.Abstractions\u0060 \u00606.0.0\u0060 of Shoko Server 6.0.0.\n\nRequires Shoko Server with \u0060Shoko.Abstractions\u0060 \u00606.0.0\u0060.",
+      "is_meta": false,
+      "dependencies": [],
+      "archives": [
+        {
+          "runtime": "any",
+          "abstraction": "6.0.0",
+          "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v2.0.1/OfflineImporter-v2.0.1-any.zip",
+          "checksum": "sha256:1b5e688816b63fe0c5f80fef566acf8340eea1373ede46cf8eda0c958a5996e4",
+          "packed_size": 192309,
+          "unpacked_size": 554870
+        }
+      ]
+    },
+    {
       "version": "2.0.0",
       "tag": "v2.0.0",
       "released_at": "2026-11-20T01:30:59.7018502Z",
