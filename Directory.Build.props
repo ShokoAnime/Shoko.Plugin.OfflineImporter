@@ -7,6 +7,6 @@
         <!-- The one place the Shoko.Abstractions version is spelled, so the
              plugin, its abstractions and the tests build against the same
              contract. -->
-        <ShokoAbstractionsVersion>6.0.0-alpha.134</ShokoAbstractionsVersion>
+        <ShokoAbstractionsVersion>6.0.0</ShokoAbstractionsVersion>
     </PropertyGroup>
 </Project>
